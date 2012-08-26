@@ -1,48 +1,42 @@
 (ns memobot.core)
 
-(def *db* 'db1)
+(def db 'db1)
 
 (defn use-db
   "Change a database (namespace)"
   [n]
   (create-ns (symbol n))
-  (intern *ns* '*db* (symbol n))  )
-
-(defn get-val
-  [k]
-  (if (ns-resolve *db* (symbol k))
-    (eval (symbol (str *db* "/" k)))
-    nil))
+  (intern *ns* 'db (symbol n))  )
 
 (defn set-key 
   "Sets the value of a key"
   [k v]
-  (intern *db* (symbol k) (atom v)))
+  (intern db (symbol k) (atom v)))
 
 (defn get-key 
   "Get the value of a key"
   [k]
-  (if (get-val k)
-    (deref (get-val k))
+  (if (ns-resolve db (symbol k))
+    (deref (eval (symbol (str db "/" k))))
     nil))
 
 (defn show-keys
   "Find all keys matching the given pattern
   TODO: pattern matching"
   [pattern]
-  (keys (ns-interns *db*)))
+  (keys (ns-interns db)))
 
 (defn key-type
   "Determine the type stored at key"
   [k]
-  (if (get-val k) 
-    (.replace (.toLowerCase (str (type (deref (get-val k))))) "class java.lang." "" )
+  (if (get-key k) 
+    (.replace (.toLowerCase (str (type (deref (get-key k))))) "class java.lang." "" )
     "none"))
 
 (defn del 
   "Delete a key"
   [k]
-  (ns-unmap *db* (symbol k)))
+  (ns-unmap db (symbol k)))
 
 
 ; default database
