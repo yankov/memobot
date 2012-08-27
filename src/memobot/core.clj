@@ -2,13 +2,8 @@
   (:use [memobot strings redis])
   )
 
-(def db 'db1)
-
-(defn use-db
-  "Change a database (namespace)"
-  [n]
-  (create-ns (symbol n))
-  (intern *ns* 'db (symbol n))  )
+; TODO: 
+; * show-keys should support patterns
 
 (defn show-keys
   "Find all keys matching the given pattern
@@ -28,21 +23,18 @@
   [db k]
   (ns-unmap db (symbol k)))
 
-
-; default database
-(use-db "db1")
-
 (defn exec
   "Executes a command"
-  [redis-command]
+  [db redis-command]
    (def command (list* (from-redis-proto redis-command)))
-   (eval (conj (apply list* ( list 'db (rest command))) (resolve ((keyword (symbol (first command))) commands)))))
-
+   (prn (conj (apply list* (list ''db1 (rest command))) (resolve ((keyword (symbol (first command))) commands))))
+   (eval (conj (apply list* (list ''db1 (rest command))) (resolve ((keyword (symbol (first command))) commands)))))
 
 ; test 
-(exec "*3\r\n$3\r\nset\r\n$4\r\nsdsd\r\n$2\r\n24\r\n")
-(prn (exec "*2\r\n$3\r\nget\r\n$4\r\nsdsd\r\n"))
+; (create-ns 'db1)
+; (exec 'db1 "*3\r\n$3\r\nset\r\n$1\r\na\r\n$1\r\n1\r\n")
+; (prn (exec "*2\r\n$3\r\nget\r\n$4\r\na\r\n"))
 
-(exec "*3\r\n$3\r\nset\r\n$4\r\nsome3\r\n$2\r\n666\r\n")
-(prn (exec "*2\r\n$3\r\nget\r\n$4\r\nsome3\r\n"))
+; (exec "*3\r\n$3\r\nset\r\n$4\r\nsome3\r\n$2\r\n666\r\n")
+; (prn (exec "*2\r\n$3\r\nget\r\n$4\r\nsome3\r\n"))
 
