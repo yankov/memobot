@@ -22,7 +22,7 @@
   "Delete a key"
   [db k]
   (if (ns-resolve db (symbol k))
-    ((ns-unmap db (symbol k))
+    (do (ns-unmap db (symbol k))
      [:cone])
   [:czero]))
 
