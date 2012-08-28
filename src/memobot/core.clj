@@ -1,5 +1,5 @@
 (ns memobot.core
-  (:use [memobot strings redis])
+  (:use [memobot redis strings])
   )
 
 ; TODO: 
@@ -21,13 +21,15 @@
 (defn del 
   "Delete a key"
   [db k]
-  (ns-unmap db (symbol k)))
+  (if (ns-resolve db (symbol k))
+    ((ns-unmap db (symbol k))
+     [:cone])
+  [:czero]))
 
 (defn exec
   "Executes a command"
   [db redis-command]
    (def command (list* (from-redis-proto redis-command)))
-   (prn (conj (apply list* (list ''db1 (rest command))) (resolve ((keyword (symbol (first command))) commands))))
    (eval (conj (apply list* (list ''db1 (rest command))) (resolve ((keyword (symbol (first command))) commands)))))
 
 ; test 

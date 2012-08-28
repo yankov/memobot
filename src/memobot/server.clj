@@ -7,7 +7,7 @@
                               SimpleChannelHandler]
      [org.jboss.netty.channel.socket.nio NioServerSocketChannelFactory]
      [org.jboss.netty.buffer ChannelBuffers])
-  (:use [memobot core db]))
+  (:use [memobot core redis db]))
 
 ;TODO: 
 ; * replace this with 0mq ...
@@ -45,7 +45,8 @@
             msg (.toString cb "UTF-8")]
         (prn msg)
         (use-db "db1")
-        (exec 'db1 msg)))
+        (.write c (ChannelBuffers/copiedBuffer (.getBytes (format-reply (exec 'db1 msg)))))
+        ))
 
     (exceptionCaught
       [ctx e]

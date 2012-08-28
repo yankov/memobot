@@ -15,3 +15,21 @@
   [args]
   (let [a (split args #"\r\n")]
     (rest (take-nth 2 a))))
+
+(def reply-msg {
+  :just-ok "+OK"
+  :just-err "-ERR"
+  :ok "+"
+  :err "-"
+  :czero ":0"
+  :cone  ":1"
+  :nokeyerr "-ERR no such key"
+  :syntaxerr "-ERR syntax error"
+  :wrongtypeerr "-ERR Operation against a key holding the wrong kind of value"
+  :pong "+PONG"
+  })
+
+(defn format-reply
+  [msg]
+    (let [[t result] msg]
+      (str (reply-msg t) result "\r\n")))
