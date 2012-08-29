@@ -23,7 +23,7 @@
   :err "-"
   :czero ":0"
   :cone  ":1"
-  :nokeyerr "-ERR no such key"
+  :nokeyerr "$-1"
   :syntaxerr "-ERR syntax error"
   :wrongtypeerr "-ERR Operation against a key holding the wrong kind of value"
   :pong "+PONG"
