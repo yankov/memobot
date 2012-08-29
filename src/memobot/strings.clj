@@ -8,13 +8,13 @@
 ; setnx 
 ; strlen
 
-(defn set-key 
+(defn set-cmd 
   "Sets the value of a key"
   [db k v]
   (intern db (symbol k) (atom v))
   [:just-ok])
 
-(defn get-key 
+(defn get-cmd
   "Get the value of a key"
   [db k]
   (if (ns-resolve db (symbol k))

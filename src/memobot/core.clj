@@ -5,26 +5,30 @@
 ; TODO: 
 ; * show-keys should support patterns
 
-(defn show-keys
+(defn keys-cmd
   "Find all keys matching the given pattern
   TODO: pattern matching"
   [db pattern]
   [:ok (keys (ns-interns db))])
 
-(defn key-type
+(defn type-cmd
   "Determine the type stored at key"
   [db k]
-  (if (get-key db k) 
-    [:ok (.replace (.toLowerCase (str (type (get (get-key db k) 1)))) "class java.lang." "" )]
+  (if (get-cmd db k) 
+    [:ok (.replace (.toLowerCase (str (type (get (get-cmd db k) 1)))) "class java.lang." "" )]
     [:ok "none"]))
 
-(defn del 
+(defn del-cmd
   "Delete a key"
   [db k]
   (if (ns-resolve db (symbol k))
     (do (ns-unmap db (symbol k))
      [:cone])
   [:czero]))
+
+(defn ping-cmd
+  []
+  [:pong])
 
 (defn exec
   "Executes a command"

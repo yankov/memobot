@@ -4,11 +4,13 @@
 ; redis command to function mappings
 (def commands 
   {:use  'use-db
-   :set  'memobot.strings/set-key
-   :get  'memobot.strings/get-key
-   :keys 'memobot.core/show-keys
-   :type 'memobot.core/key-type
-   :del  'memobot.core/del})
+   :set  'memobot.strings/set-cmd
+   :get  'memobot.strings/get-cmd
+   :keys 'memobot.core/keys-cmd
+   :type 'memobot.core/type-cmd
+   :del  'memobot.core/del-cmd
+   :ping 'memobot.core/ping-cmd
+  })
 
 (defn from-redis-proto
   "Converts redis protocol to a list"
@@ -46,9 +48,3 @@
       (if (coll? result)
         (to-redis-proto result)
         (str (reply-msg t) result "\r\n"))))
-
-
-
-
-
-
