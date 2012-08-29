@@ -9,14 +9,14 @@
   "Find all keys matching the given pattern
   TODO: pattern matching"
   [db pattern]
-  (keys (ns-interns db)))
+  [:ok (keys (ns-interns db))])
 
 (defn key-type
   "Determine the type stored at key"
   [db k]
   (if (get-key db k) 
-    (.replace (.toLowerCase (str (type (get-key db k)))) "class java.lang." "" )
-    "none"))
+    [:ok (.replace (.toLowerCase (str (type (get (get-key db k) 1)))) "class java.lang." "" )]
+    [:ok "none"]))
 
 (defn del 
   "Delete a key"
