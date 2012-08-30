@@ -3,13 +3,19 @@
 
 ; redis command to function mappings
 (def commands 
-  {:use  'use-db
-   :set  'memobot.strings/set-cmd
-   :get  'memobot.strings/get-cmd
-   :keys 'memobot.core/keys-cmd
-   :type 'memobot.core/type-cmd
-   :del  'memobot.core/del-cmd
-   :ping 'memobot.core/ping-cmd
+  {:use    'use-db
+   :set    'memobot.strings/set-cmd
+   :get    'memobot.strings/get-cmd
+   :keys   'memobot.core/keys-cmd
+   :type   'memobot.core/type-cmd
+   :del    'memobot.core/del-cmd
+   :ping   'memobot.core/ping-cmd
+   :incr   'memobot.strings/incr-cmd
+   :decr   'memobot.strings/decr-cmd
+   :incrby 'memobot.strings/incrby-cmd
+   :decrby 'memobot.strings/incrby-cmd
+   :setnx  'memobot.strings/setnx-cmd
+   :strlen 'memobot.strings/strlen-cmd
   })
 
 (defn from-redis-proto
@@ -35,6 +41,7 @@
   :nokeyerr "$-1"
   :syntaxerr "-ERR syntax error"
   :wrongtypeerr "-ERR Operation against a key holding the wrong kind of value"
+  :nointerr "-ERR value is not an integer or out of range"
   :cnegone ":-1\r\n"
   :nullbulk "$-1\r\n"
   :nullmultibulk "*-1\r\n"

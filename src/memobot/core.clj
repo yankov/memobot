@@ -36,11 +36,4 @@
    (def command (list* (from-redis-proto redis-command)))
    (eval (conj (apply list* (list ''db1 (rest command))) (resolve ((keyword (symbol (first command))) commands)))))
 
-; test 
-; (create-ns 'db1)
-; (exec 'db1 "*3\r\n$3\r\nset\r\n$1\r\na\r\n$1\r\n1\r\n")
-; (prn (exec "*2\r\n$3\r\nget\r\n$4\r\na\r\n"))
-
-; (exec "*3\r\n$3\r\nset\r\n$4\r\nsome3\r\n$2\r\n666\r\n")
-; (prn (exec "*2\r\n$3\r\nget\r\n$4\r\nsome3\r\n"))
-
+; next TODO: incr/decr
