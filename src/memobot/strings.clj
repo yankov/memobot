@@ -15,12 +15,27 @@
   (intern db (symbol k) (atom (fix-type v)))
   [:just-ok])
 
+(defn setnx-cmd 
+  "Set the value of a key, only if the key does not exist"
+  [db k v]
+  (if (not (resolve (symbol (str db "/" k))))
+    (do 
+       (set-cmd db k v)
+       [:cone])
+    [:czero]))
+
 (defn get-cmd
   "Get the value of a key"
   [db k]
   (if (ns-resolve db (symbol k))
     [:ok (deref (eval (symbol (str db "/" k))))]
     [:nokeyerr]))
+
+(defn strlen-cmd
+  [db k]
+  "Get the length of the value stored in a key"
+  [:int (.length (str (get (get-cmd db k) 1)))]
+  )
 
 (defn incr-cmd
   "Increment the integer value of a key by one"
