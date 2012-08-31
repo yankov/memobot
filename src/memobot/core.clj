@@ -3,7 +3,7 @@
   )
 
 ; TODO: 
-; * show-keys should support patterns
+; implement hash commands
 
 (defn keys-cmd
   "Find all keys matching the given pattern
@@ -29,7 +29,7 @@
   [:czero]))
 
 (defn ping-cmd
-  []
+  [db]
   [:pong])
 
 (defn exec
