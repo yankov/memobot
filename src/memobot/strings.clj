@@ -29,7 +29,19 @@
 (defn incr-cmd
   "Increment the integer value of a key by one"
   [db k]
-  (try 
-    (prn (eval (symbol (str db "/" k))))
-    (swap! (eval (symbol (str db "/" k))) inc)
-    (catch ClassCastException e (do (prn "caught exception: " (.getMessage e)) [:nointerr]))))
+  (let [ck (symbol (str db "/" k))]
+    (try 
+      (if (not (resolve ck))
+        (set-cmd db k "0"))
+      [:int (swap! (eval ck) inc)]
+      (catch ClassCastException e (do (prn "caught exception: " (.getMessage e)) [:nointerr])))))
+
+(defn decr-cmd
+  "Decrement the integer value of a key by one"
+  [db k]
+  (let [ck (symbol (str db "/" k))]
+    (try 
+      (if (not (resolve ck))
+        (set-cmd db k "0"))
+      [:int (swap! (eval ck) dec)]
+      (catch ClassCastException e (do (prn "caught exception: " (.getMessage e)) [:nointerr])))))

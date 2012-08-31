@@ -36,6 +36,7 @@
   :just-err "-ERR"
   :ok "+"
   :err "-"
+  :int ":"
   :czero ":0"
   :cone  ":1"
   :nokeyerr "$-1"
