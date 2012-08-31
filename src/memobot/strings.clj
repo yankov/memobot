@@ -1,9 +1,5 @@
 (ns memobot.strings)
 
-;TODO:
-; setnx 
-; strlen
-
 (defn fix-type [v]
   (try 
     (Integer/parseInt v)
@@ -34,8 +30,7 @@
 (defn strlen-cmd
   [db k]
   "Get the length of the value stored in a key"
-  [:int (.length (str (get (get-cmd db k) 1)))]
-  )
+  [:int (.length (str (get (get-cmd db k) 1)))])
 
 (defn incr-cmd
   "Increment the integer value of a key by one"

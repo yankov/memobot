@@ -8,8 +8,10 @@
 (defn keys-cmd
   "Find all keys matching the given pattern
   TODO: pattern matching"
-  [db pattern]
-  [:ok (keys (ns-interns db))])
+  [db mask]
+  (let [all-keys (keys (ns-interns db)) 
+        pattern  (re-pattern (.replace mask "*" ".*"))]
+    [:ok (filter #(re-matches pattern (str %)) all-keys)]))
 
 (defn type-cmd
   "Determine the type stored at key"
@@ -35,5 +37,3 @@
   [db redis-command]
    (def command (list* (from-redis-proto redis-command)))
    (eval (conj (apply list* (list ''db1 (rest command))) (resolve ((keyword (symbol (first command))) commands)))))
-
-; next TODO: incr/decr
