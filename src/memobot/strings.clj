@@ -1,10 +1,6 @@
 (ns memobot.strings)
 
 ;TODO:
-; incr
-; decr
-; incrby
-; decrby
 ; setnx 
 ; strlen
 
@@ -45,3 +41,25 @@
         (set-cmd db k "0"))
       [:int (swap! (eval ck) dec)]
       (catch ClassCastException e (do (prn "caught exception: " (.getMessage e)) [:nointerr])))))
+
+(defn incrby-cmd
+  "Increment the integer value of a key by the given amount"
+  [db k v]
+  (let [ck (symbol (str db "/" k))]
+    (try 
+      (if (not (resolve ck))
+        (set-cmd db k "0"))
+      [:int (swap! (eval ck) #(+ % (fix-type v)))]
+      (catch ClassCastException e (do (prn "caught exception: " (.getMessage e)) [:nointerr])))))
+
+(defn decrby-cmd
+  "Decrement the integer value of a key by the given amount"
+  [db k v]
+  (let [ck (symbol (str db "/" k))]
+    (try 
+      (if (not (resolve ck))
+        (set-cmd db k "0"))
+      [:int (swap! (eval ck) #(- % (fix-type v)))]
+      (catch ClassCastException e (do (prn "caught exception: " (.getMessage e)) [:nointerr])))))
+
+

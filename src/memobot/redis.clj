@@ -13,7 +13,7 @@
    :incr   'memobot.strings/incr-cmd
    :decr   'memobot.strings/decr-cmd
    :incrby 'memobot.strings/incrby-cmd
-   :decrby 'memobot.strings/incrby-cmd
+   :decrby 'memobot.strings/decrby-cmd
    :setnx  'memobot.strings/setnx-cmd
    :strlen 'memobot.strings/strlen-cmd
   })
