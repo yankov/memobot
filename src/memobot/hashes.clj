@@ -3,8 +3,6 @@
 
 ; TODO:
 ; hdel
-; hget
-; hgetall
 ; hexists
 ; hincrby
 ; hkeys
@@ -36,5 +34,15 @@
           (if (nil? v)
             [:nokeyerr]
             [:ok v]))
+        [:wrongtypeerr]))
+    [:nokeyerr]))
+
+(defn hgetall-cmd
+  "Get all the fields and values in a hash"
+  [db k]
+  (if (ns-resolve db (symbol k))
+    (let [ck (deref (eval (symbol (str db "/" k))))]
+      (if (map? ck)
+        [:ok (flatten (map #(list (name (key %)) (val %) )  ck))]
         [:wrongtypeerr]))
     [:nokeyerr]))
