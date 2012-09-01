@@ -2,7 +2,6 @@
   (:use [memobot types]))
 
 ; TODO:
-; hexists
 ; hincrby
 ; hkeys
 ; hlen
@@ -55,5 +54,15 @@
         (do 
           (swap! ck #(dissoc % (keyword f)))
           [:cone])
+        [:czero]))
+    [:czero]))
+
+(defn hexists-cmd
+  "Determine if a hash field exists"
+  [db k f]
+  (if (exists? db k) 
+    (let [ck (get-atom db k)]
+      (if (contains? @ck (keyword f))
+        [:cone]
         [:czero]))
     [:czero]))
