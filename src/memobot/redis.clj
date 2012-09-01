@@ -3,19 +3,29 @@
 
 ; redis command to function mappings
 (def commands 
-  {:use    'use-db
-   :set    'memobot.strings/set-cmd
-   :get    'memobot.strings/get-cmd
-   :keys   'memobot.core/keys-cmd
-   :type   'memobot.core/type-cmd
-   :del    'memobot.core/del-cmd
-   :ping   'memobot.core/ping-cmd
-   :incr   'memobot.strings/incr-cmd
-   :decr   'memobot.strings/decr-cmd
-   :incrby 'memobot.strings/incrby-cmd
-   :decrby 'memobot.strings/decrby-cmd
-   :setnx  'memobot.strings/setnx-cmd
-   :strlen 'memobot.strings/strlen-cmd
+  {:use       'use-db
+   :set       'memobot.strings/set-cmd
+   :get       'memobot.strings/get-cmd
+   :keys      'memobot.core/keys-cmd
+   :type      'memobot.core/type-cmd
+   :del       'memobot.core/del-cmd
+   :ping      'memobot.core/ping-cmd
+   :incr      'memobot.strings/incr-cmd
+   :decr      'memobot.strings/decr-cmd
+   :incrby    'memobot.strings/incrby-cmd
+   :decrby    'memobot.strings/decrby-cmd
+   :setnx     'memobot.strings/setnx-cmd
+   :strlen    'memobot.strings/strlen-cmd
+   :hdel      'memobot.hashes/hdel-cmd
+   :hget      'memobot.hashes/hget-cmd
+   :hgetall   'memobot.hashes/hgetall-cmd
+   :hexists   'memobot.hashes/hexists-cmd
+   :hincrby   'memobot.hashes/hincrby-cmd
+   :hkeys     'memobot.hashes/hkeys-cmd
+   :hlen      'memobot.hashes/hlen-cmd
+   :hset      'memobot.hashes/hset-cmd
+   :hsetnx    'memobot.hashes/hsetnx-cmd
+   :hvals     'memobot.hashes/hvals-cmd
   })
 
 (defn from-redis-proto

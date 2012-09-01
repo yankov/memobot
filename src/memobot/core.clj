@@ -1,13 +1,12 @@
 (ns memobot.core
-  (:use [memobot redis strings])
+  (:use [memobot redis strings hashes])
   )
 
 ; TODO: 
 ; implement hash commands
 
 (defn keys-cmd
-  "Find all keys matching the given pattern
-  TODO: pattern matching"
+  "Find all keys matching the given pattern"
   [db mask]
   (let [all-keys (keys (ns-interns db)) 
         pattern  (re-pattern (.replace mask "*" ".*"))]

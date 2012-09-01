@@ -1,9 +1,5 @@
-(ns memobot.strings)
-
-(defn fix-type [v]
-  (try 
-    (Integer/parseInt v)
-  (catch NumberFormatException e v)))
+(ns memobot.strings
+  (:use [memobot types]))
 
 (defn set-cmd 
   "Sets the value of a key"
