@@ -2,7 +2,6 @@
   (:use [memobot types]))
 
 ;TODO:
-; lpushx
 ; lrange
 ; lrem
 ; lset
@@ -66,7 +65,12 @@
         [:wrongtypeerr]))
     [:nokeyerr]))
 
-    
-
-  
-
+(defn lrange-cmd
+  "Get a range of elements from a list"
+  [db k start end]
+  (if (exists? db k)
+    (let [ck (get-atom db k)]
+      (if (list? @ck)
+        [:ok (drop (fix-type start) (take (fix-type end) @ck))]
+        [:wrongtypeerr]))
+    [:emptymultibulk]))    
