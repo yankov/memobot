@@ -17,7 +17,7 @@
   [db k i]
   (if (exists? db k)
     (let [ck (get-atom db k)]
-      [:int (nth @ck (fix-type i) nil)])
+      [:ok (nth @ck (fix-type i) nil)])
     [:nokeyerr]))
 
 ; TODO: count is probably expensive on list?
@@ -43,6 +43,21 @@
     (let [ck (get-atom db k)]
       [:int (count @ck)])
     [:czero]))
+
+(defn lpop-cmd
+  "Remove and get the first element in a list"
+  [db k]
+  (if (exists? db k)
+    (let [ck (get-atom db k)]
+      (if (list? @ck) 
+        (let [e (first @ck)]
+          (if (nil? e)
+            [:nokeyerr]
+            (do 
+              (swap! ck #(pop %))
+              [:ok e])))
+        [:wrongtypeerr]))
+    [:nokeyerr]))
 
     
   
