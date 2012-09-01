@@ -2,7 +2,6 @@
   (:use [memobot types]))
 
 ; TODO:
-; hsetnx
 ; hvals
 
 (defn hset-cmd 
@@ -78,5 +77,14 @@
   (if (exists? db k)
     (let [ck (get-atom db k)]
       [:ok (count (keys @ck))])
+    [:czero]))
+
+(defn hsetnx-cmd
+  "Set the value of a hash field, only if the field does not exist"
+  [db k f v]
+  (if (not= (hexists-cmd db k f) [:cone])
+    (do
+      (hset-cmd db k f v)
+      [:cone])
     [:czero]))
 
