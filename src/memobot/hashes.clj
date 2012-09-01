@@ -2,7 +2,6 @@
   (:use [memobot types]))
 
 ; TODO:
-; hdel
 ; hexists
 ; hincrby
 ; hkeys
@@ -46,3 +45,15 @@
         [:ok (flatten (map #(list (name (key %)) (val %) )  ck))]
         [:wrongtypeerr]))
     [:nokeyerr]))
+
+(defn hdel-cmd
+  "Delete one or more hash fields"
+  [db k f]
+  (if (exists? db k) 
+    (let [ck (get-atom db k)]
+      (if (contains? @ck (keyword f))
+        (do 
+          (swap! ck #(dissoc % (keyword f)))
+          [:cone])
+        [:czero]))
+    [:czero]))
