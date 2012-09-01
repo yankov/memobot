@@ -2,8 +2,6 @@
   (:use [memobot types]))
 
 ; TODO:
-; hincrby
-; hkeys
 ; hlen
 ; hsetnx
 ; hvals
@@ -66,3 +64,11 @@
         [:cone]
         [:czero]))
     [:czero]))
+
+(defn hkeys-cmd
+  "Get all the fields in a hash"
+  [db k]
+  (if (exists? db k)
+    (let [ck (get-atom db k)]
+      [:ok (map #(name %) (keys @ck))])
+    [:emptymultibulk]))

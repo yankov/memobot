@@ -20,7 +20,6 @@
    :hget      'memobot.hashes/hget-cmd
    :hgetall   'memobot.hashes/hgetall-cmd
    :hexists   'memobot.hashes/hexists-cmd
-   :hincrby   'memobot.hashes/hincrby-cmd
    :hkeys     'memobot.hashes/hkeys-cmd
    :hlen      'memobot.hashes/hlen-cmd
    :hset      'memobot.hashes/hset-cmd
