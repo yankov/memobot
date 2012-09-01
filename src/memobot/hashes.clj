@@ -1,9 +1,6 @@
 (ns memobot.hashes
   (:use [memobot types]))
 
-; TODO:
-; hvals
-
 (defn hset-cmd 
   "Set the string value of a hash field"
   [db k f v]
@@ -88,3 +85,10 @@
       [:cone])
     [:czero]))
 
+(defn hvals-cmd
+  "Get all the values in a hash"
+  [db k]
+  (if (exists? db k)
+    (let [ck (get-atom db k)]
+      [:ok (map #(str %) (vals @ck))])
+      [:emptymultibulk]))
