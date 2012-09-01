@@ -25,6 +25,18 @@
    :hset      'memobot.hashes/hset-cmd
    :hsetnx    'memobot.hashes/hsetnx-cmd
    :hvals     'memobot.hashes/hvals-cmd
+   :lindex    'memobot.lists/lindex-cmd
+   :llen      'memobot.lists/llen-cmd
+   :lpop      'memobot.lists/lpop-cmd
+   :lpush     'memobot.lists/lpush-cmd
+   :lpushx    'memobot.lists/lpushx-cmd
+   :lrange    'memobot.lists/lrange-cmd
+   :lrem      'memobot.lists/lrem-cmd
+   :lset      'memobot.lists/lset-cmd
+   :ltrim     'memobot.lists/ltrim-cmd
+   :rpop      'memobot.lists/rpop-cmd
+   :rpush     'memobot.lists/rpush-cmd
+   :rpushx    'memobot.lists/rpushx-cmd
   })
 
 (defn from-redis-proto

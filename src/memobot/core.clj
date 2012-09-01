@@ -1,5 +1,5 @@
 (ns memobot.core
-  (:use [memobot redis strings hashes])
+  (:use [memobot redis strings hashes lists])
   )
 
 ; TODO: 
