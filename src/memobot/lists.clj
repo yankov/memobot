@@ -2,7 +2,6 @@
   (:use [memobot types]))
 
 ;TODO:
-; llen
 ; lpop
 ; lpushx
 ; lrange
@@ -36,6 +35,14 @@
           (swap! ck #(conj % (fix-type v)))
           [:int (count @ck)])
         [:wrongtypeerr]))))
+
+(defn llen-cmd
+  "Get the length of a list"
+  [db k]
+  (if (exists? db k)
+    (let [ck (get-atom db k)]
+      [:int (count @ck)])
+    [:czero]))
 
     
   
