@@ -2,7 +2,6 @@
   (:use [memobot types]))
 
 ;TODO:
-; lrange
 ; lrem
 ; lset
 ; ltrim
@@ -74,3 +73,25 @@
         [:ok (drop (fix-type start) (take (fix-type end) @ck))]
         [:wrongtypeerr]))
     [:emptymultibulk]))    
+
+(defn rpush-cmd
+  "Append one value to a list"
+  [db k v]
+  (if (not (exists? db k))
+    (do
+      (intern db (symbol k) (atom (list (fix-type v))))
+      [:cone])
+    (let [ck (get-atom db k)]
+      (if (list? @ck) 
+        (do 
+          (swap! ck #(concat % (fix-type v)))
+          [:int (count @ck)])
+        [:wrongtypeerr]))))
+
+(defn rpushx-cmd
+  "Append one value to a list"
+  [db k v]
+  (if (exists? db k)
+    (rpush-cmd db k v)
+    [:czero]))
+
