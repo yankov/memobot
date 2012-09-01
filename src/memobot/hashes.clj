@@ -2,7 +2,6 @@
   (:use [memobot types]))
 
 ; TODO:
-; hlen
 ; hsetnx
 ; hvals
 
@@ -72,3 +71,12 @@
     (let [ck (get-atom db k)]
       [:ok (map #(name %) (keys @ck))])
     [:emptymultibulk]))
+
+(defn hlen-cmd
+  "Get the number of fields in a hash"
+  [db k]
+  (if (exists? db k)
+    (let [ck (get-atom db k)]
+      [:ok (count (keys @ck))])
+    [:czero]))
+
