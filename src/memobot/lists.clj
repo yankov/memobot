@@ -2,7 +2,6 @@
   (:use [memobot types]))
 
 ;TODO:
-; lpop
 ; lpushx
 ; lrange
 ; lrem
@@ -36,6 +35,14 @@
           [:int (count @ck)])
         [:wrongtypeerr]))))
 
+(defn lpushx-cmd
+  "Prepend one or multiple values to a list"
+  [db k v]
+  (if (exists? db k)
+    (lpush-cmd db k v)
+    [:czero]))
+  
+
 (defn llen-cmd
   "Get the length of a list"
   [db k]
@@ -60,5 +67,6 @@
     [:nokeyerr]))
 
     
+
   
 
