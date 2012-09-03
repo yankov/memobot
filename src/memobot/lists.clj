@@ -4,11 +4,7 @@
 
 ;TODO:
 ; lrem
-; lset
 ; ltrim
-; rpop
-; rpush
-; rpushx
 
 (defn counted-list?
   [v]
@@ -112,6 +108,20 @@
               [:ok e])))
         [:wrongtypeerr]))
     [:nokeyerr]))
+
+(defn lset-cmd
+  "Set the value of an element in a list by its index"
+  [db k i v]
+  (if (exists? db k)
+    (let [ck (get-atom db k)]
+      (if (counted-list? @ck)
+        (do 
+          (try
+            (swap! ck #(assoc % (fix-type i) v))
+            [:just-ok]
+          (catch IndexOutOfBoundsException e [:outofrangeerr])))
+        [:wrongtypeerr]))
+    [:nosuchkey]))
 
   
 
