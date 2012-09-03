@@ -3,7 +3,7 @@
   )
 
 ; TODO: 
-; implement list commands
+; implement sets commands
 
 (defn keys-cmd
   "Find all keys matching the given pattern"
