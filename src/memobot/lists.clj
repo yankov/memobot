@@ -2,10 +2,6 @@
   (:use [memobot types] 
         [clojure.data.finger-tree]))
 
-;TODO:
-; lrem
-; ltrim
-
 (defn counted-list?
   [v]
   (= (type v) clojure.data.finger_tree.CountedDoubleList))
