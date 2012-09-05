@@ -3,8 +3,6 @@
         [clojure.set]))
 
 ;TODO
-; sismember
-; smembers
 ; smove
 ; spop
 ; srandmember
@@ -67,4 +65,15 @@
           value (fix-type v)]
       [:int (if (contains? @s value) 1 0)])
     [:czero]))
+
+(defn smembers-cmd
+  "Get all the members in a set"
+  [db k]
+  (if (exists? db k)
+    (let [s (get-atom db k)]
+      (if (set? @s)
+        [:ok @s]
+        [:wrongtypeerr]))
+    [:emptymultibulk]))    
+
 
