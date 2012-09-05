@@ -3,10 +3,6 @@
         [clojure.set]))
 
 ;TODO
-; smove
-; spop
-; srandmember
-; srem 
 ; sunion
 
 (defn sadd-cmd
@@ -76,4 +72,18 @@
         [:wrongtypeerr]))
     [:emptymultibulk]))    
 
+(defn srem-cmd
+  "Remove one or more members from a set"
+  [db k v]
+  (if (exists? db k)
+    (let [s (get-atom db k)
+          value (fix-type v)]
+      (if (contains? @s value) 
+        (do 
+          (swap! s #(disj % value))
+          [:cone])
+        [:czero]))
+    [:czero]))
 
+
+  
