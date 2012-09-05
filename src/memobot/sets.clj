@@ -3,7 +3,6 @@
         [clojure.set]))
 
 ;TODO
-; sinter
 ; sismember
 ; smembers
 ; smove
@@ -59,3 +58,13 @@
          [:ok (intersection @s1 @s2)]
          [:wrongtypeerr]))
     [:emptymultibulk]))
+
+(defn sismember-cmd
+  "Determine if a given value is a member of a set"
+  [db k v]
+  (if (exists? db k)
+    (let [s (get-atom db k)
+          value (fix-type v)]
+      [:int (if (contains? @s value) 1 0)])
+    [:czero]))
+
