@@ -3,7 +3,6 @@
         [clojure.set]))
 
 ;TODO
-; sdiff
 ; sinter
 ; sismember
 ; smembers
@@ -47,5 +46,16 @@
           s2 (get-atom db k2)]
        (if (and (set? @s1) (set? @s2))
          [:ok (difference @s1 @s2)]
+         [:wrongtypeerr]))
+    [:emptymultibulk]))
+
+(defn sinter-cmd
+  "Intersect multiple sets"
+  [db k1 k2]
+  (if (and (exists? db k1) (exists? db k2))
+    (let [s1 (get-atom db k1)
+          s2 (get-atom db k2)]
+       (if (and (set? @s1) (set? @s2))
+         [:ok (intersection @s1 @s2)]
          [:wrongtypeerr]))
     [:emptymultibulk]))
