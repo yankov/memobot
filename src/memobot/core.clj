@@ -1,6 +1,5 @@
 (ns memobot.core
-  (:use [memobot redis strings hashes lists])
-  )
+  (:use [memobot redis strings hashes lists sets]))
 
 ; TODO: 
 ; implement sets commands
