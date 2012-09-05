@@ -2,8 +2,7 @@
   (:use [memobot types]
         [clojure.set]))
 
-;TODO
-; sunion
+;TODO: add support for operations with >2 sets
 
 (defn sadd-cmd
   "Add one or more members to a set"
@@ -30,7 +29,6 @@
       [:int (count @ck)])
     [:czero]))
 
-;TODO: add support for more then 2 sets
 (defn sdiff-cmd
   "Subtract multiple sets"
   [db k1 k2]
@@ -84,6 +82,17 @@
           [:cone])
         [:czero]))
     [:czero]))
+
+(defn sunion-cmd
+  "Add multiple sets"
+  [db k1 k2]
+  (if (and (exists? db k1) (exists? db k2))
+    (let [s1 (get-atom db k1)
+          s2 (get-atom db k2)]
+       (if (and (set? @s1) (set? @s2))
+         [:ok (union @s1 @s2)]
+         [:wrongtypeerr]))
+    [:emptymultibulk]))
 
 
   
