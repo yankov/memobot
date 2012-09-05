@@ -29,3 +29,11 @@
             [:cone])
           [:czero])
         [:wrongtypeerr]))))
+
+(defn scard-cmd
+  "Get the number of members in a set"
+  [db k]
+  (if (exists? db k)
+    (let [ck (get-atom db k)]
+      [:int (count @ck)])
+    [:czero]))
