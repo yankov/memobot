@@ -3,13 +3,19 @@
 
 ;TODO
 ; zcount
-; zincrby
 ; zrange
 ; zrangebyscore
 ; zrank
 ; zrem
 ; zrevrange
 ; zscore 
+
+(defn sort-map
+  "Sort a given map"
+  [m]
+  (into (sorted-map-by (fn [key1 key2]
+   (compare [(get m key2) key2]
+            [(get m key1) key1]))) m))
 
 (defn zadd-cmd
   "Add one or more members to a sorted set, or update its score if it already exists"
@@ -45,6 +51,16 @@
       (intern db (symbol k) (atom {(keyword member) (fix-type increment)}))
       [:ok increment])))
 
-; (into (sorted-map-by (fn [key1 key2]
-;    (compare [(get m key2) key2]
-;             [(get m key1) key1]))) m)
+(defn zrange-cmd
+  "Return a range of members in a sorted set, by index"
+  ([db k start end] (zrange-cmd db k start end "noscores"))
+  ([db k start end scores] 
+  (if (exists? db k)
+    (let [ck (get-atom db k)]
+      (if (map? @ck)
+        (let [zset (drop (fix-type start) (take (fix-type end) (sort-map @ck)))]
+          (if (= scores "noscores")
+            [:ok (map #(name %) (keys zset))]  
+            [:ok (flatten (map #(list (name (key %)) (val %) ) zset))]))
+        [:wrongtypeerr]))
+    [:emptymultibulk])))    
