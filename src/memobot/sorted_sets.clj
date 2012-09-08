@@ -26,6 +26,13 @@
           [:cone])
         [:wrongtypeerr]))))
   
+(defn zcard-cmd
+  "Get the number of members in a sorted set"
+  [db k]
+  (if (exists? db k)
+    (let [ck (get-atom db k)]
+      [:int (count @ck)])
+    [:czero]))
 
 
 ; (into (sorted-map-by (fn [key1 key2]
