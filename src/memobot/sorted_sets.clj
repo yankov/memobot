@@ -6,7 +6,6 @@
 ; zrangebyscore
 ; zrank
 ; zrevrank
-; zscore 
 
 (defn sort-map
   "Sort a given map"
@@ -102,3 +101,15 @@
         [:czero]))
     [:czero]))
 
+(defn zscore-cmd
+  "Get the score associated with the given member in a sorted set"
+  [db k member]
+  (if (exists? db k)
+    (let [zset (get-atom db k)]
+      (if (map? @zset) 
+        (let [score (get @zset (keyword member) nil)]
+          (if (nil? score)
+            [:nokeyerr]
+            [:ok score]))
+        [:wrongtypeerr]))
+    [:nokeyerr]))
