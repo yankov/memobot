@@ -2,7 +2,6 @@
   (:use [memobot types]))
 
 ;TODO
-; zcard
 ; zcount
 ; zincrby
 ; zrange
@@ -34,6 +33,17 @@
       [:int (count @ck)])
     [:czero]))
 
+(defn zincrby-cmd
+  "Increment the score of a member in a sorted set"
+  [db k increment member]
+  (if (exists? db k)
+    (let [ck (get-atom db k)
+          member (keyword member)]
+      (swap! ck #(assoc % member (+ (get @ck member 0) (fix-type increment))))
+      [:ok (get @ck member)])
+    (do 
+      (intern db (symbol k) (atom {(keyword member) (fix-type increment)}))
+      [:ok increment])))
 
 ; (into (sorted-map-by (fn [key1 key2]
 ;    (compare [(get m key2) key2]
