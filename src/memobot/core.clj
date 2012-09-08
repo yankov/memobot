@@ -36,4 +36,5 @@
    (def command (list* (from-redis-proto redis-command)))
    (try 
      (eval (conj (apply list* (list ''db1 (rest command))) (resolve ((keyword (symbol (first command))) commands))))
-   (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" (first command) "' command")])))
+   (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" (first command) "' command")])
+   (catch NullPointerException e [:just-err, (str " unknown command '" (first command) "'")])))
