@@ -34,4 +34,6 @@
   "Executes a command"
   [db redis-command]
    (def command (list* (from-redis-proto redis-command)))
-   (eval (conj (apply list* (list ''db1 (rest command))) (resolve ((keyword (symbol (first command))) commands)))))
+   (try 
+     (eval (conj (apply list* (list ''db1 (rest command))) (resolve ((keyword (symbol (first command))) commands))))
+   (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" (first command) "' command")])))

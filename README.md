@@ -13,11 +13,11 @@ Supported Features
 * **Sets**: `sadd`, `scard`, `sdiff`, `sinter`, `sismember`, `smembers`, `spop`, `srem`, `sunion`  
 * **Sorted Sets**: `zadd`, `zcard`, `zincrby`, `zrange`, `zrem`, `zscore`  
 
-Details on how to use these commands can be found [here](http://redis.io/commands)
+Details on how to use these commands can be found [here](http://redis.io/commands).
 
 TODO
 ====
 
 * Refactor sorted sets. Should probably use skip list or finger trees to be able to search in log(n) time.  
-* Fix bugs that are breaking redis-benchmark.  
-* Clustering
+* Tweak performance.
+* Clustering.
