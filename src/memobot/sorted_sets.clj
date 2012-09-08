@@ -5,8 +5,7 @@
 ; zcount
 ; zrangebyscore
 ; zrank
-; zrem
-; zrevrange
+; zrevrank
 ; zscore 
 
 (defn sort-map
@@ -79,6 +78,27 @@
         [:wrongtypeerr]))
     [:emptymultibulk])))    
 
+; (defn zrank-cmd
+;   "Determine the index of a member in a sorted set"
+;   [db k member]
+;   (if (exists? db k)
+;     (let [zset (get-atom db k)]
+;       (if (map? @ck) 
+;         [:ok ]
+;         [:wrongtypeerr]))
+;     [:nokeyerr]))
 
 
+(defn zrem-cmd
+  "Remove one or more members from a sorted set"
+  [db k member]
+  (if (exists? db k) 
+    (let [zset (get-atom db k)
+          member (keyword member)]
+      (if (contains? @zset member)
+        (do 
+          (swap! zset #(dissoc % member))
+          [:cone])
+        [:czero]))
+    [:czero]))
 
