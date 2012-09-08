@@ -1,7 +1,7 @@
 (ns memobot.sorted-sets
   (:use [memobot types]))
 
-;TODO
+; TODO:
 ; zcount
 ; zrangebyscore
 ; zrank
@@ -77,15 +77,15 @@
         [:wrongtypeerr]))
     [:emptymultibulk])))    
 
-; (defn zrank-cmd
-;   "Determine the index of a member in a sorted set"
-;   [db k member]
-;   (if (exists? db k)
-;     (let [zset (get-atom db k)]
-;       (if (map? @ck) 
-;         [:ok ]
-;         [:wrongtypeerr]))
-;     [:nokeyerr]))
+(defn zrank-cmd
+  "Determine the index of a member in a sorted set"
+  [db k member]
+  (if (exists? db k)
+    (let [zset (get-atom db k)]
+      (if (map? @ck) 
+        [:ok ]
+        [:wrongtypeerr]))
+    [:nokeyerr]))
 
 
 (defn zrem-cmd
