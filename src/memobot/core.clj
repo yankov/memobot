@@ -1,8 +1,8 @@
 (ns memobot.core
-  (:use [memobot redis strings hashes lists sets sorted-sets]))
+  (:use [memobot types redis strings hashes lists sets sorted-sets]))
 
 ; TODO: 
-; implement sets commands
+; handle wrong type, non-eget-atom,
 
 (defn keys-cmd
   "Find all keys matching the given pattern"
@@ -32,9 +32,14 @@
 
 (defn exec
   "Executes a command"
-  [db redis-command]
-   (def command (list* (from-redis-proto redis-command)))
-   (try 
-     (eval (conj (apply list* (list ''db1 (rest command))) (resolve ((keyword (symbol (first command))) commands))))
-   (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" (first command) "' command")])
-   (catch NullPointerException e [:just-err, (str " unknown command '" (first command) "'")])))
+  [db protocol-str]
+   (let [redis-command (list* (from-redis-proto protocol-str))
+         args (apply list* (list ''db1 (rest redis-command)))
+         command ((keyword (symbol (first redis-command))) commands)]
+     (try 
+       (eval (conj args (resolve command)))
+     (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" command "' command")])
+     (catch NullPointerException e [:just-err, (str " unknown command '" (first redis-command) "'")]))))
+
+
+
