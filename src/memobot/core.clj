@@ -34,12 +34,14 @@
   "Executes a command"
   [db protocol-str]
    (let [redis-command (list* (from-redis-proto protocol-str))
+         k (get-key db (nth redis-command 1))
          args (apply list* (list ''db1 (rest redis-command)))
-         command ((keyword (symbol (first redis-command))) commands)]
+         command-table ((keyword (symbol (first redis-command))) commands)
+         mode (command-table 1)
+         command (command-table 0)]
      (try 
        (eval (conj args (resolve command)))
      (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" command "' command")])
      (catch NullPointerException e [:just-err, (str " unknown command '" (first redis-command) "'")]))))
-
 
 

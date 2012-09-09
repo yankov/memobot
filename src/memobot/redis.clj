@@ -1,63 +1,67 @@
 (ns memobot.redis)
 (use '[clojure.string :only (join split)])
 
-; redis command to function mappings
+; Redis command to function mappings
+; This is the meaning of the flags:
+; w: write command (may modify the key space).
+; r: read command  (will never modify the key space).
+
 (def commands 
   {:use            'use-db
-   :set            'memobot.strings/set-cmd
-   :get            'memobot.strings/get-cmd
-   :keys           'memobot.core/keys-cmd
-   :type           'memobot.core/type-cmd
-   :del            'memobot.core/del-cmd
-   :ping           'memobot.core/ping-cmd
-   :incr           'memobot.strings/incr-cmd
-   :decr           'memobot.strings/decr-cmd
-   :incrby         'memobot.strings/incrby-cmd
-   :decrby         'memobot.strings/decrby-cmd
-   :setnx          'memobot.strings/setnx-cmd
-   :strlen         'memobot.strings/strlen-cmd
-   :hdel           'memobot.hashes/hdel-cmd
-   :hget           'memobot.hashes/hget-cmd
-   :hgetall        'memobot.hashes/hgetall-cmd
-   :hexists        'memobot.hashes/hexists-cmd
-   :hkeys          'memobot.hashes/hkeys-cmd
-   :hlen           'memobot.hashes/hlen-cmd
-   :hset           'memobot.hashes/hset-cmd
-   :hsetnx         'memobot.hashes/hsetnx-cmd
-   :hvals          'memobot.hashes/hvals-cmd
-   :lindex         'memobot.lists/lindex-cmd
-   :llen           'memobot.lists/llen-cmd
-   :lpop           'memobot.lists/lpop-cmd
-   :lpush          'memobot.lists/lpush-cmd
-   :lpushx         'memobot.lists/lpushx-cmd
-   :lrange         'memobot.lists/lrange-cmd
-   :lrem           'memobot.lists/lrem-cmd
-   :lset           'memobot.lists/lset-cmd
-   :ltrim          'memobot.lists/ltrim-cmd
-   :rpop           'memobot.lists/rpop-cmd
-   :rpush          'memobot.lists/rpush-cmd
-   :rpushx         'memobot.lists/rpushx-cmd
-   :sadd           'memobot.sets/sadd-cmd
-   :scard          'memobot.sets/scard-cmd
-   :sdiff          'memobot.sets/sdiff-cmd
-   :sinter         'memobot.sets/sinter-cmd
-   :sismember      'memobot.sets/sismember-cmd
-   :smembers       'memobot.sets/smembers-cmd
-   :smove          'memobot.sets/smove-cmd
-   :spop           'memobot.sets/spop-cmd
-   :srandmember    'memobot.sets/srandmember-cmd
-   :srem           'memobot.sets/srem-cmd
-   :sunion         'memobot.sets/sunion-cmd 
-   :zadd           'memobot.sorted-sets/zadd-cmd 
-   :zcard          'memobot.sorted-sets/zcard-cmd 
-   :zcount         'memobot.sorted-sets/zcount-cmd 
-   :zincrby        'memobot.sorted-sets/zincrby-cmd 
-   :zrange         'memobot.sorted-sets/zrange-cmd 
-   :zrangebyscore  'memobot.sorted-sets/zrangebyscore-cmd 
-   :zrank          'memobot.sorted-sets/zrank-cmd 
-   :zrem           'memobot.sorted-sets/zrem-cmd 
-   :zrevrange      'memobot.sorted-sets/zrevrange-cmd 
-   :zscore         'memobot.sorted-sets/zscore-cmd 
+   :set            ['memobot.strings/set-cmd "w"]
+   :get            ['memobot.strings/get-cmd "r"]
+   :keys           ['memobot.core/keys-cmd "r"]
+   :type           ['memobot.core/type-cmd "r"]
+   :del            ['memobot.core/del-cmd "w"]
+   :ping           ['memobot.core/ping-cmd "r"]
+   :incr           ['memobot.strings/incr-cmd "w"]
+   :decr           ['memobot.strings/decr-cmd "w"]
+   :incrby         ['memobot.strings/incrby-cmd "w"]
+   :decrby         ['memobot.strings/decrby-cmd "w"]
+   :setnx          ['memobot.strings/setnx-cmd "w"]
+   :strlen         ['memobot.strings/strlen-cmd "r"]
+   :hdel           ['memobot.hashes/hdel-cmd "w"]
+   :hget           ['memobot.hashes/hget-cmd "r"]
+   :hgetall        ['memobot.hashes/hgetall-cmd "r"]
+   :hexists        ['memobot.hashes/hexists-cmd "r"]
+   :hkeys          ['memobot.hashes/hkeys-cmd "r"]
+   :hlen           ['memobot.hashes/hlen-cmd "r"]
+   :hset           ['memobot.hashes/hset-cmd "w"]
+   :hsetnx         ['memobot.hashes/hsetnx-cmd "w"]
+   :hvals          ['memobot.hashes/hvals-cmd "r"]
+   :lindex         ['memobot.lists/lindex-cmd "r"]
+   :llen           ['memobot.lists/llen-cmd "r"]
+   :lpop           ['memobot.lists/lpop-cmd "w"]
+   :lpush          ['memobot.lists/lpush-cmd "w"]
+   :lpushx         ['memobot.lists/lpushx-cmd "w"]
+   :lrange         ['memobot.lists/lrange-cmd "r"]
+   :lrem           ['memobot.lists/lrem-cmd "w"]
+   :lset           ['memobot.lists/lset-cmd "w"]
+   :ltrim          ['memobot.lists/ltrim-cmd "w"]
+   :rpop           ['memobot.lists/rpop-cmd "w"]
+   :rpush          ['memobot.lists/rpush-cmd "w"]
+   :rpushx         ['memobot.lists/rpushx-cmd "w"]
+   :sadd           ['memobot.sets/sadd-cmd "w"]
+   :scard          ['memobot.sets/scard-cmd "r"]
+   :sdiff          ['memobot.sets/sdiff-cmd "r"]
+   :sinter         ['memobot.sets/sinter-cmd "r"]
+   :sismember      ['memobot.sets/sismember-cmd "r"]
+   :smembers       ['memobot.sets/smembers-cmd "r"]
+   :smove          ['memobot.sets/smove-cmd "w"]
+   :spop           ['memobot.sets/spop-cmd "w"]
+   :srandmember    ['memobot.sets/srandmember-cmd "r"]
+   :srem           ['memobot.sets/srem-cmd "w"]
+   :sunion         ['memobot.sets/sunion-cmd "r"]
+   :zadd           ['memobot.sorted-sets/zadd-cmd "w"] 
+   :zcard          ['memobot.sorted-sets/zcard-cmd  "r"]
+   :zcount         ['memobot.sorted-sets/zcount-cmd "r"]
+   :zincrby        ['memobot.sorted-sets/zincrby-cmd "w"]
+   :zrange         ['memobot.sorted-sets/zrange-cmd "r"]
+   :zrangebyscore  ['memobot.sorted-sets/zrangebyscore-cmd "r"]
+   :zrank          ['memobot.sorted-sets/zrank-cmd "w"]
+   :zrem           ['memobot.sorted-sets/zrem-cmd "w"]
+   :zrevrange      ['memobot.sorted-sets/zrevrange-cmd "r"] 
+   :zscore         ['memobot.sorted-sets/zscore-cmd "r"]
   })
 
 (defn from-redis-proto
