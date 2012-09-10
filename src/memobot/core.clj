@@ -30,6 +30,11 @@
   [db]
   [:pong])
 
+
+(defn init-atom
+  [k v]
+  (intern (symbol (namespace k)) (symbol (name k)) (atom v)))
+
 (defn exec
   "Executes a command"
   [db protocol-str]
@@ -39,14 +44,19 @@
          command-table ((keyword (symbol (first redis-command))) commands)
          mode (command-table 1)
          command (command-table 0)
+         empty-val (command-table 2)
          key-exists? (not (nil? (exists? k)))]
      (try
         (cond 
           (and (not key-exists?) (= mode "w"))
-            (do
-              (eval (conj args (resolve command))))
+            (if (contains? #{:nokeyerr :czero} empty-val)
+              [empty-val]
+              (do
+                (if (not (nil? empty-val))
+                  (init-atom k empty-val))
+                (eval (conj args (resolve command)))))
           (and (not key-exists?) (= mode "r"))
-            [(command-table 2)]
+            [empty-val]
           (and key-exists? (= mode "r"))
             (eval (conj args (resolve command)))
           (and key-exists? (= mode "w"))

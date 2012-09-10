@@ -33,8 +33,6 @@
   [db k]
   (let [ck (symbol (str db "/" k))]
     (try 
-      (if (not (resolve ck))
-        (set-cmd db k "0"))
       [:int (swap! (eval ck) inc)]
       (catch ClassCastException e (do (prn "caught exception: " (.getMessage e)) [:nointerr])))))
 
