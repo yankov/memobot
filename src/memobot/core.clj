@@ -38,9 +38,19 @@
          args (apply list* (list ''db1 (rest redis-command)))
          command-table ((keyword (symbol (first redis-command))) commands)
          mode (command-table 1)
-         command (command-table 0)]
-     (try 
-       (eval (conj args (resolve command)))
+         command (command-table 0)
+         key-exists? (not (nil? (exists? k)))]
+     (try
+        (cond 
+          (and (not key-exists?) (= mode "w"))
+            (do
+              (eval (conj args (resolve command))))
+          (and (not key-exists?) (= mode "r"))
+            [(command-table 2)]
+          (and key-exists? (= mode "r"))
+            (eval (conj args (resolve command)))
+          (and key-exists? (= mode "w"))
+            (eval (conj args (resolve command))))
      (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" command "' command")])
      (catch NullPointerException e [:just-err, (str " unknown command '" (first redis-command) "'")]))))
 
