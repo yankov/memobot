@@ -35,11 +35,17 @@
 (defn run-func
   [command-table k args]
   (let [command (first command-table)
-        response-type (command-table 3)
-        mode (command-table 1)]
-        (if (= mode "r")
-          [response-type (apply (resolve command) k args)]
-          [response-type (swap! (eval k) #( apply (resolve command) % args ) )])
+        response-type (command-table 4)
+        allowed-types (command-table 1)
+        mode (command-table 2)]
+
+        (if (and (not (= allowed-types [:any])) (not (contains? allowed-types (keyword (type-cmd (deref (eval k)))))))
+          (do
+            (prn (type-cmd (fix-type (deref (eval k)))))
+            [:wrongtypeerr])
+          (if (= mode "r")
+            [response-type (apply (resolve command) (deref (eval k)) args)]
+            [response-type (swap! (eval k) #( apply (resolve command) % args ) )]))
     ))
 
 (defn exec
@@ -49,9 +55,9 @@
          k (get-key db (nth redis-command 1))
          args (drop 2 redis-command)
          command-table ((keyword (symbol (first redis-command))) commands)
-         mode (command-table 1)
+         mode (command-table 2)
          command (command-table 0)
-         empty-val (command-table 2)
+         empty-val (command-table 3)
          key-exists? (not (nil? (exists? k)))]
      (try
         (cond 
@@ -68,9 +74,7 @@
                   (run-func command-table k args)))
           (and (not key-exists?) (= mode "r"))
             [empty-val]
-          (and key-exists? (= mode "r"))
-            (run-func command-table (deref (eval k)) args)
-          (and key-exists? (= mode "w"))
+          (key-exists?)
             (run-func command-table k args))
      (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" command "' command")])
      (catch NullPointerException e [:just-err, (str " unknown command '" (first redis-command) "'")]))))
