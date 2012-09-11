@@ -11,7 +11,7 @@
    :set            ['memobot.strings/set-cmd "w" nil :just-ok]
    :get            ['memobot.strings/get-cmd "r" :nokeyerr :ok]
    :keys           ['memobot.core/keys-cmd "r" nil :ok]
-   :type           ['memobot.core/type-cmd "r" "none" :ok] 
+   :type           ['memobot.core/type-cmd "r" :cnone :ok] 
    :del            ['memobot.core/del-cmd "w" :czero :cone] 
    :ping           ['memobot.core/ping-cmd "r" nil :pong]
    :incr           ['memobot.strings/incr-cmd "w" 0 :int]
@@ -85,6 +85,7 @@
   :int ":"
   :czero ":0"
   :cone  ":1"
+  :cnone "+none"
   :nokeyerr "$-1"
   :nosuchkey "-ERR no such key"
   :syntaxerr "-ERR syntax error"

@@ -14,7 +14,7 @@
 (defn type-cmd
   "Determine the type stored at key"
   [k]
-  (.replace (.toLowerCase (str (type k) "class java.lang." "" ))))
+  (.replace (.toLowerCase (str (type k))) "class java.lang." "" ))
 
 (defn del-cmd
   "Delete a key"
