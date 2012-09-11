@@ -4,8 +4,7 @@
 (defn set-cmd 
   "Sets the value of a key"
   [k v]
-  (intern (symbol (namespace k)) (symbol (name k)) (atom (fix-type v)))
-  [:just-ok])
+  (intern (symbol (namespace k)) (symbol (name k)) (atom (fix-type v))))
 
 (defn setnx-cmd 
   "Set the value of a key, only if the key does not exist"
@@ -19,31 +18,31 @@
 (defn get-cmd
   "Get the value of a key"
   [k]
-  [:ok k])
+  k)
   
 (defn strlen-cmd
   "Get the length of the value stored in a key"
   [k]
-  [:int (.length k)])
+  (.length (str k)))
 
 (defn incr-cmd
   "Increment the integer value of a key by one"
   [k]
-  [:int (swap! (eval k) inc)])
+  (inc k))
 
 (defn decr-cmd
   "Decrement the integer value of a key by one"
   [k]
-  [:int (swap! (eval k) dec)])
+  (dec k))
 
 (defn incrby-cmd
   "Increment the integer value of a key by the given amount"
   [k v]
-  [:int (swap! (eval k) #(+ % (fix-type v)))])
+  (+ k (fix-type v)))
 
 (defn decrby-cmd
   "Decrement the integer value of a key by the given amount"
   [k v]
-  [:int (swap! (eval k) #(- % (fix-type v)))])
+  (- k (fix-type v)))
 
 

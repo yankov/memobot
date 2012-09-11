@@ -13,10 +13,8 @@
 
 (defn type-cmd
   "Determine the type stored at key"
-  [db k]
-  (if (get-cmd db k) 
-    [:ok (.replace (.toLowerCase (str (type (get (get-cmd db k) 1)))) "class java.lang." "" )]
-    [:ok "none"]))
+  [k]
+  (.replace (.toLowerCase (str (type k) "class java.lang." "" ))))
 
 (defn del-cmd
   "Delete a key"
@@ -30,17 +28,19 @@
   [db]
   [:pong])
 
-
 (defn init-atom
   [k v]
   (intern (symbol (namespace k)) (symbol (name k)) (atom v)))
 
 (defn run-func
-  [command k args]
-  (prn command)
-  (prn k)
-  (prn args)
-  (apply (resolve command) k args))
+  [command-table k args]
+  (let [command (first command-table)
+        response-type (command-table 3)
+        mode (command-table 1)]
+        (if (= mode "r")
+          [response-type (apply (resolve command) k args)]
+          [response-type (swap! (eval k) #( apply (resolve command) % args ) )])
+    ))
 
 (defn exec
   "Executes a command"
@@ -55,19 +55,23 @@
          key-exists? (not (nil? (exists? k)))]
      (try
         (cond 
+          (= (name command) "set-cmd")
+            (do 
+              (apply set-cmd k args)
+              [:just-ok])
           (and (not key-exists?) (= mode "w"))
             (if (contains? #{:nokeyerr :czero} empty-val)
               [empty-val]
               (do
                 (if (not (nil? empty-val))
                   (init-atom k empty-val))
-                (run-func command k args)))
+                  (run-func command-table k args)))
           (and (not key-exists?) (= mode "r"))
             [empty-val]
           (and key-exists? (= mode "r"))
-            (run-func command (deref (eval k)) args)
+            (run-func command-table (deref (eval k)) args)
           (and key-exists? (= mode "w"))
-            (run-func command k args))
+            (run-func command-table k args))
      (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" command "' command")])
      (catch NullPointerException e [:just-err, (str " unknown command '" (first redis-command) "'")]))))
 
