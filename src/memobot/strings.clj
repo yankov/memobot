@@ -10,10 +10,10 @@
   "Set the value of a key, only if the key does not exist"
   [k v]
   (if (not (exists? k))
-    (do 
-       (set-cmd k v)
-       [:cone])
-    [:czero]))
+    (do
+      (set-cmd k v)
+      1)
+     0))
 
 (defn get-cmd
   "Get the value of a key"

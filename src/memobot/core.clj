@@ -63,6 +63,8 @@
             (do 
               (apply set-cmd k args)
               [:just-ok])
+          (= (name command) "setnx-cmd")
+              [:int (apply setnx-cmd k args)]
           (= (name command) "keys-cmd" )
               [:ok (keys-cmd (name k))]
           (and (not key-exists?) (= mode "w"))

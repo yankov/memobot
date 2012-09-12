@@ -18,7 +18,7 @@
    :decr           ['memobot.strings/decr-cmd #{:long :integer} "w" 0 :int]
    :incrby         ['memobot.strings/incrby-cmd #{:long :integer} "w" 0 :int]
    :decrby         ['memobot.strings/decrby-cmd #{:long :integer} "w" 0 :int]
-   :setnx          ['memobot.strings/setnx-cmd #{:string :long :integer} "w" :czero :cone]
+   :setnx          ['memobot.strings/setnx-cmd #{:string :long :integer} "w" nil :int]
    :strlen         ['memobot.strings/strlen-cmd #{:string :long :integer} "r" :czero :int]
    :hdel           ['memobot.hashes/hdel-cmd "w" nil]
    :hget           ['memobot.hashes/hget-cmd "r" :nokeyerr]
