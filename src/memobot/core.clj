@@ -18,15 +18,12 @@
 
 (defn del-cmd
   "Delete a key"
-  [db k]
-  (if (ns-resolve db (symbol k))
-    (do (ns-unmap db (symbol k))
-     [:cone])
-  [:czero]))
+  [k]
+  (ns-unmap (symbol (namespace k)) (symbol (name k))))
 
 (defn ping-cmd
-  [db]
-  [:pong])
+  []
+  true)
 
 (defn init-atom
   [k v]
@@ -39,11 +36,17 @@
         response-type (command-table 4)
         allowed-types (command-table 1)
         mode (command-table 2)]
-
+        (prn k)
         (if (or (= allowed-types #{:any}) (contains? allowed-types (keyword (type-cmd (deref (eval k))))))
-          (if (= mode "r")
-            [response-type (apply (resolve command) (deref (eval k)) args)]
-            [response-type (swap! (eval k) #( apply (resolve command) % args ) )])
+          (cond
+            (= (name command) "del-cmd" )
+              (do
+                (del-cmd k)
+                [:cone])
+            (= mode "r")
+              [response-type (apply (resolve command) (deref (eval k)) args)]
+            (= mode "w")
+              [response-type (swap! (eval k) #( apply (resolve command) % args ) )])
           [:wrongtypeerr])
     ))
 
