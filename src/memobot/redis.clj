@@ -26,7 +26,7 @@
    :hexists        ['memobot.hashes/hexists-cmd "r"]
    :hkeys          ['memobot.hashes/hkeys-cmd "r" :emptymultibulk]
    :hlen           ['memobot.hashes/hlen-cmd "r" :czero]
-   :hset           ['memobot.hashes/hset-cmd "w" {}]
+   :hset           ['memobot.hashes/hset-cmd #{:any} "w" {} :cone] 
    :hsetnx         ['memobot.hashes/hsetnx-cmd "w" {}]
    :hvals          ['memobot.hashes/hvals-cmd "r" :emptymultibulk]
    :lindex         ['memobot.lists/lindex-cmd "r" :nokeyerr]
