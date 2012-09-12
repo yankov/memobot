@@ -10,10 +10,10 @@
   {:use            'use-db
    :set            ['memobot.strings/set-cmd #{:string :long :integer} "w" nil :just-ok]
    :get            ['memobot.strings/get-cmd #{:string :long :integer} "r" :nokeyerr :ok]
-   :keys           ['memobot.core/keys-cmd #{:any} "r" nil :ok]
+   :keys           ['memobot.core/keys-cmd #{:any} "r" :ok :ok]
    :type           ['memobot.core/type-cmd #{:any} "r" :cnone :ok] 
    :del            ['memobot.core/del-cmd #{:any} "w" :czero :cone] 
-   :ping           ['memobot.core/ping-cmd #{:any} "r" nil :pong]
+   :ping           ['memobot.core/ping-cmd #{:any} "r" :pong :pong]
    :incr           ['memobot.strings/incr-cmd #{:long :integer} "w" 0 :int]
    :decr           ['memobot.strings/decr-cmd #{:long :integer} "w" 0 :int]
    :incrby         ['memobot.strings/incrby-cmd #{:long :integer} "w" 0 :int]
