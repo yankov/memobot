@@ -4,7 +4,7 @@
 (defn set-cmd 
   "Sets the value of a key"
   [k v]
-  (intern (symbol (namespace k)) (symbol (name k)) (atom (fix-type v))))
+  (intern (symbol (namespace k)) (symbol (name k)) (atom v)))
 
 (defn setnx-cmd 
   "Set the value of a key, only if the key does not exist"
@@ -38,11 +38,11 @@
 (defn incrby-cmd
   "Increment the integer value of a key by the given amount"
   [k v]
-  (+ k (fix-type v)))
+  (+ k v))
 
 (defn decrby-cmd
   "Decrement the integer value of a key by the given amount"
   [k v]
-  (- k (fix-type v)))
+  (- k v))
 
 

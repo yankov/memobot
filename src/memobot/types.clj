@@ -5,6 +5,9 @@
     (Integer/parseInt v)
   (catch NumberFormatException e v)))
 
+(defn fix-types [v]
+  (map #(fix-type %) (list* v)))
+
 (defn exists? 
   ([k] (resolve k))
   ([db k] (ns-resolve db (symbol k))))

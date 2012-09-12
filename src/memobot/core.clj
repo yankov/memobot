@@ -46,12 +46,15 @@
           [:wrongtypeerr])
     ))
 
+; TODO
+; think of a smarter way to check conditions here
+; check how macro could be used to simplify this code
 (defn exec
   "Executes a command"
   [db protocol-str]
    (let [redis-command (list* (from-redis-proto protocol-str))
          k (get-key db (nth redis-command 1 nil))
-         args (drop 2 redis-command)
+         args (fix-types (drop 2 redis-command))
          command-table ((keyword (symbol (first redis-command))) commands)
          mode (command-table 2)
          command (command-table 0)
