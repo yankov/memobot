@@ -34,18 +34,17 @@
 
 (defn run-func
   [command-table k args]
+
   (let [command (first command-table)
         response-type (command-table 4)
         allowed-types (command-table 1)
         mode (command-table 2)]
 
-        (if (and (not (= allowed-types [:any])) (not (contains? allowed-types (keyword (type-cmd (deref (eval k)))))))
-          (do
-            (prn (type-cmd (fix-type (deref (eval k)))))
-            [:wrongtypeerr])
+        (if (or (= allowed-types #{:any}) (contains? allowed-types (keyword (type-cmd (deref (eval k))))))
           (if (= mode "r")
             [response-type (apply (resolve command) (deref (eval k)) args)]
-            [response-type (swap! (eval k) #( apply (resolve command) % args ) )]))
+            [response-type (swap! (eval k) #( apply (resolve command) % args ) )])
+          [:wrongtypeerr])
     ))
 
 (defn exec
@@ -74,7 +73,7 @@
                   (run-func command-table k args)))
           (and (not key-exists?) (= mode "r"))
             [empty-val]
-          (key-exists?)
+          (true? key-exists?)
             (run-func command-table k args))
      (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" command "' command")])
      (catch NullPointerException e [:just-err, (str " unknown command '" (first redis-command) "'")]))))
