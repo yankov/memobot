@@ -13,65 +13,39 @@
 
 (defn hgetall-cmd
   "Get all the fields and values in a hash"
-  [db k]
-  (if (ns-resolve db (symbol k))
-    (let [ck (deref (eval (symbol (str db "/" k))))]
-      (if (map? ck)
-        [:ok (flatten (map #(list (name (key %)) (val %) )  ck))]
-        [:wrongtypeerr]))
-    [:nokeyerr]))
+  [k]
+  (flatten (map #(list (name (key %)) (val %) )  k)))
 
 (defn hdel-cmd
   "Delete one or more hash fields"
-  [db k f]
-  (if (exists? db k) 
-    (let [ck (get-atom db k)]
-      (if (contains? @ck (keyword f))
-        (do 
-          (swap! ck #(dissoc % (keyword f)))
-          [:cone])
-        [:czero]))
-    [:czero]))
+  [k f]
+  (dissoc k (keyword f)))
 
 (defn hexists-cmd
   "Determine if a hash field exists"
-  [db k f]
-  (if (exists? db k) 
-    (let [ck (get-atom db k)]
-      (if (contains? @ck (keyword f))
-        [:cone]
-        [:czero]))
-    [:czero]))
+  [k f]
+  (if (contains? k (keyword f)) 1 0))
 
 (defn hkeys-cmd
   "Get all the fields in a hash"
-  [db k]
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      [:ok (map #(name %) (keys @ck))])
-    [:emptymultibulk]))
+  [k]
+  (map #(name %) (keys k)))
 
 (defn hlen-cmd
   "Get the number of fields in a hash"
-  [db k]
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      [:ok (count (keys @ck))])
-    [:czero]))
+  [k]
+  (count (keys k)))
 
 (defn hsetnx-cmd
   "Set the value of a hash field, only if the field does not exist"
-  [db k f v]
-  (if (not= (hexists-cmd db k f) [:cone])
+  [k f v]
+  (if (not (hexists-cmd k f))
     (do
-      (hset-cmd db k f v)
-      [:cone])
-    [:czero]))
+      (hset-cmd k f v)
+      1)
+    0))
 
 (defn hvals-cmd
   "Get all the values in a hash"
-  [db k]
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      [:ok (map #(str %) (vals @ck))])
-      [:emptymultibulk]))
+  [k]
+  (map #(str %) (vals k)))
