@@ -11,7 +11,7 @@
 (defn type-cmd
   "Determine the type stored at key"
   [k]
-  (.replace (.toLowerCase (str (type k))) "class java.lang." "" ))
+  (get all-types (symbol (.replace (str (type k)) "class " "")) "none"))
 
 (defn del-cmd
   "Delete a key"
