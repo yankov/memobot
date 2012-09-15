@@ -5,7 +5,7 @@
   "Find all keys matching the given pattern"
   [mask]
   (let [all-keys (keys (ns-interns 'db1)) 
-        pattern  (re-pattern (.replace mask "*" ".*"))]
+        pattern  (re-pattern (.replace (name mask) "*" ".*"))]
     (filter #(re-matches pattern (str %)) all-keys)))
 
 (defn type-cmd
@@ -35,10 +35,8 @@
         mode (command-table 2)]
         (if (or (= allowed-types #{:any}) (contains? allowed-types (keyword (type-cmd (deref (eval k))))))
           (cond
-            (= (name command) "del-cmd" )
-              (do
-                (del-cmd k)
-                [:cone])
+            (= mode "w!")
+              [response-type (apply (resolve command) k args)]
             (= mode "r")
               [response-type (apply (resolve command) (deref (eval k)) args)]
             (= mode "w")
@@ -46,9 +44,6 @@
           [:wrongtypeerr])
     ))
 
-; TODO
-; think of a smarter way to check conditions here
-; check how macro could be used to simplify this code
 (defn exec
   "Executes a command"
   [db protocol-str]
@@ -59,28 +54,32 @@
          mode (command-table 2)
          command (command-table 0)
          empty-val (command-table 3)
+         response-type (command-table 4)
          key-exists? (not (nil? (exists? k)))]
      (try
         (cond 
-          (= (name command) "set-cmd")
-            (do 
-              (apply set-cmd k args)
-              [:just-ok])
-          (= (name command) "setnx-cmd")
-              [:int (apply setnx-cmd k args)]
-          (= (name command) "keys-cmd" )
-              [:ok (keys-cmd (name k))]
-          (and (not key-exists?) (= mode "w"))
+
+          ;writing for non-existing key
+          (and (not key-exists?) (or (= mode "w") (= mode "w!")))
             (if (contains? #{:nokeyerr :czero} empty-val)
               [empty-val]
               (do
                 (if (not (nil? empty-val))
                   (init-atom k empty-val))
                   (run-func command-table k args)))
+
+          ;read for non-existing key
           (and (not key-exists?) (= mode "r"))
             [empty-val]
+          
+          ;reading state (no key provided) 
+          (= mode "rs")
+            [response-type (apply (resolve command) k args)]
+
+          ;key exists
           (true? key-exists?)
             (run-func command-table k args))
+
      (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" command "' command")])
      (catch NullPointerException e [:just-err, (str " unknown command '" (first redis-command) "'")]))))
 

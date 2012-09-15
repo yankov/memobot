@@ -4,16 +4,12 @@
 (defn set-cmd 
   "Sets the value of a key"
   [k v]
-  (intern (symbol (namespace k)) (symbol (name k)) (atom v)))
+  v)
 
 (defn setnx-cmd 
   "Set the value of a key, only if the key does not exist"
   [k v]
-  (if (not (exists? k))
-    (do
-      (set-cmd k v)
-      1)
-     0))
+  (if (= k :new) v k))
 
 (defn get-cmd
   "Get the value of a key"

@@ -8,17 +8,17 @@
 
 (def commands 
   {:use            'use-db
-   :set            ['memobot.strings/set-cmd #{:string :long :integer} "w" nil :just-ok]
+   :set            ['memobot.strings/set-cmd #{:any} "w" 0 :just-ok]
    :get            ['memobot.strings/get-cmd #{:string :long :integer} "r" :nokeyerr :ok]
-   :keys           ['memobot.core/keys-cmd #{:any} "r" :ok :ok]
+   :keys           ['memobot.core/keys-cmd #{:any} "rs" :ok :ok]
    :type           ['memobot.core/type-cmd #{:any} "r" :cnone :ok] 
-   :del            ['memobot.core/del-cmd #{:any} "w" :czero :cone] 
+   :del            ['memobot.core/del-cmd #{:any} "w!" :czero :cone] 
    :ping           ['memobot.core/ping-cmd #{:any} "r" :pong :pong]
    :incr           ['memobot.strings/incr-cmd #{:long :integer} "w" 0 :int]
    :decr           ['memobot.strings/decr-cmd #{:long :integer} "w" 0 :int]
    :incrby         ['memobot.strings/incrby-cmd #{:long :integer} "w" 0 :int]
    :decrby         ['memobot.strings/decrby-cmd #{:long :integer} "w" 0 :int]
-   :setnx          ['memobot.strings/setnx-cmd #{:string :long :integer} "w" nil :int]
+   :setnx          ['memobot.strings/setnx-cmd #{:any} "w" :new :int]
    :strlen         ['memobot.strings/strlen-cmd #{:string :long :integer} "r" :czero :int]
    :hdel           ['memobot.hashes/hdel-cmd #{:any} "w" :czero :cone]
    :hget           ['memobot.hashes/hget-cmd #{:any} "r" :nokeyerr :ok]
@@ -99,9 +99,13 @@
   :pong "+PONG"
   })
 
+(def short-response #{:cone :czero :just-ok})
+
 (defn format-reply
   [msg]
     (let [[t result] msg]
-      (if (coll? result)
-        (to-redis-proto result)
-        (str (reply-msg t) result "\r\n"))))
+      (if (contains? short-response t)
+        (str (reply-msg t) "\r\n")
+        (if (coll? result)
+          (to-redis-proto result)
+          (str (reply-msg t) result "\r\n")))))
