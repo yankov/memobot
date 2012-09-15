@@ -40,10 +40,8 @@
   "Set the value of a hash field, only if the field does not exist"
   [k f v]
   (if (not (hexists-cmd k f))
-    (do
-      (hset-cmd k f v)
-      1)
-    0))
+    (hset-cmd k f v)
+    k))
 
 (defn hvals-cmd
   "Get all the values in a hash"
