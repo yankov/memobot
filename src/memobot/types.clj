@@ -22,8 +22,8 @@
   (symbol (str db "/" k)))
 
 (defn get-atom
-  [db k]
-  (eval (get-key db k)))
+  ([k] (deref (eval k)))
+  ([db k] (eval (get-key db k))))
 
 (def all-types
   { 'java.lang.String "string"

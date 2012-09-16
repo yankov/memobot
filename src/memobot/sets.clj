@@ -25,7 +25,11 @@
 (defn sinter-cmd
   "Intersect multiple sets"
   [k1 k2]
-  (intersection k1 k2))
+  (let [s1 (get-atom k1) 
+        k2 (get-key (namespace k1) k2)
+        s2 (if (exists? k2) (get-atom k2) nil)]
+    
+    (intersection s1 s2)))
 
 (defn sismember-cmd
   "Determine if a given value is a member of a set"
@@ -50,4 +54,9 @@
 (defn sunion-cmd
   "Add multiple sets"
   [k1 k2]
-  (union k1 k2))
+  (let [s1 (get-atom k1) 
+        k2 (get-key (namespace k1) k2)
+        s2 (if (exists? k2) (get-atom k2) nil)]
+    
+    (union s1 s2)))
+
