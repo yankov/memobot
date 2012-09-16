@@ -1,5 +1,6 @@
 (ns memobot.redis)
 (use '[clojure.string :only (join split)])
+(require ['clojure.data.finger-tree :as 'ftree])
 
 ; Redis command to function mappings
 ; This is the meaning of the flags:
@@ -30,17 +31,17 @@
    :hsetnx         ['memobot.hashes/hsetnx-cmd #{:hash} "w" {} :cone]
    :hvals          ['memobot.hashes/hvals-cmd #{:hash} "r" :emptymultibulk :ok]
    :lindex         ['memobot.lists/lindex-cmd "r" :nokeyerr]
-   :llen           ['memobot.lists/llen-cmd "r" :czero]
-   :lpop           ['memobot.lists/lpop-cmd "w" :nokeyerr]
-   :lpush          ['memobot.lists/lpush-cmd "w" '()]
-   :lpushx         ['memobot.lists/lpushx-cmd "w" nil]
-   :lrange         ['memobot.lists/lrange-cmd "r" :emptymultibulk]
-   :lrem           ['memobot.lists/lrem-cmd "w" "0"]
-   :lset           ['memobot.lists/lset-cmd "w" :nosuchkey]
-   :ltrim          ['memobot.lists/ltrim-cmd "w" '()]
-   :rpop           ['memobot.lists/rpop-cmd "w" :nokeyerr] 
-   :rpush          ['memobot.lists/rpush-cmd "w" '()]
-   :rpushx         ['memobot.lists/rpushx-cmd "w" nil] 
+   :llen           ['memobot.lists/llen-cmd "r" #{:list} :czero :int]
+   :lpop           ['memobot.lists/lpop-cmd "w" #{:list} :nokeyerr :ok]
+   :lpush          ['memobot.lists/lpush-cmd "w" #{:list} (ftree/counted-double-list) :int]
+   :lpushx         ['memobot.lists/lpushx-cmd "w" #{:list} nil]
+   :lrange         ['memobot.lists/lrange-cmd "r" #{:list} :emptymultibulk]
+   :lrem           ['memobot.lists/lrem-cmd "w" #{:list} "0"]
+   :lset           ['memobot.lists/lset-cmd "w" #{:list} :nosuchkey]
+   :ltrim          ['memobot.lists/ltrim-cmd "w" #{:list} (ftree/counted-double-list)]
+   :rpop           ['memobot.lists/rpop-cmd "w" #{:list} :nokeyerr] 
+   :rpush          ['memobot.lists/rpush-cmd "w" #{:list} (ftree/counted-double-list)]
+   :rpushx         ['memobot.lists/rpushx-cmd "w" #{:list} nil] 
    :sadd           ['memobot.sets/sadd-cmd "w" {}]
    :scard          ['memobot.sets/scard-cmd "r" :czero]
    :sdiff          ['memobot.sets/sdiff-cmd "r" :emptymultibulk]

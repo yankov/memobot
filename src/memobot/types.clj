@@ -26,5 +26,6 @@
     'java.lang.Long "integer"
     'clojure.lang.PersistentArrayMap "hash"
     'clojure.lang.PersistentList "list"
+    'clojure.data.finger_tree.CountedDoubleList "list"
     'clojure.lang.PersistentHashSet "set"
   })

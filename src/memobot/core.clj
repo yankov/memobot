@@ -58,7 +58,7 @@
          key-exists? (not (nil? (exists? k)))]
      (try
         (cond 
-
+          
           ;writing for non-existing key
           (and (not key-exists?) (or (= mode "w") (= mode "w!")))
             (if (contains? #{:nokeyerr :czero} empty-val)
