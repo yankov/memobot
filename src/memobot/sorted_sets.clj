@@ -16,66 +16,38 @@
 
 (defn zadd-cmd
   "Add one or more members to a sorted set, or update its score if it already exists"
-  [db k score member]
-  (if (not (exists? db k))
-    (do
-    (intern db (symbol k) (atom {(keyword member) (fix-type score)}))
-      [:cone])
-    (let [ck (get-atom db k)]
-      (if (map? @ck) 
-        (do 
-          (swap! (eval ck) #(assoc % (keyword member) (fix-type score)))
-          [:cone])
-        [:wrongtypeerr]))))
+  [k score member]
+  (assoc k (keyword member) score))
   
 (defn zcard-cmd
   "Get the number of members in a sorted set"
-  [db k]
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      [:int (count @ck)])
-    [:czero]))
+  [k]
+  (count k))
 
 (defn zincrby-cmd
   "Increment the score of a member in a sorted set"
-  [db k increment member]
-  (if (exists? db k)
-    (let [ck (get-atom db k)
-          member (keyword member)]
-      (swap! ck #(assoc % member (+ (get @ck member 0) (fix-type increment))))
-      [:ok (get @ck member)])
-    (do 
-      (intern db (symbol k) (atom {(keyword member) (fix-type increment)}))
-      [:ok increment])))
+  [k increment member]
+  (assoc k (keyword member) (+ (get k (keyword member) 0) increment)))
 
 (defn zrange-cmd
   "Return a range of members in a sorted set, by index"
-  ([db k start end] (zrange-cmd db k start end "noscores"))
-  ([db k start end scores] 
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      (if (map? @ck)
-        (let [zset (drop (fix-type start) (take (fix-type end) (sort-map @ck 1)))]
-          (if (= scores "noscores")
-            [:ok (map #(name %) (keys zset))]  
-            [:ok (flatten (map #(list (name (key %)) (val %) ) zset))]))
-        [:wrongtypeerr]))
-    [:emptymultibulk])))    
+  ([k start end] (zrange-cmd k start end "noscores"))
+  ([k start end scores] 
+    (let [zset (drop start (take end (sort-map k 1)))]
+      (if (= scores "noscores")
+        (map #(name %) (keys zset))  
+        (flatten (map #(list (name (key %)) (val %) ) zset))))))
 
 ;TODO: DRY it up
 (defn zrevrange-cmd
   "Return a range of members in a sorted set, by index, with scores ordered from high to low"
-  ([db k start end] (zrange-cmd db k start end "noscores"))
-  ([db k start end scores] 
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      (if (map? @ck)
-        (let [zset (drop (fix-type start) (take (fix-type end) (sort-map @ck -1)))]
-          (if (= scores "noscores")
-            [:ok (map #(name %) (keys zset))]  
-            [:ok (flatten (map #(list (name (key %)) (val %) ) zset))]))
-        [:wrongtypeerr]))
-    [:emptymultibulk])))    
+  ([k start end] (zrange-cmd k start end "noscores"))
+  ([k start end scores] 
+    (let [zset (drop start (take end (sort-map k -1)))]
+      (if (= scores "noscores")
+        (map #(name %) (keys zset))  
+        (flatten (map #(list (name (key %)) (val %) ) zset))))))
+
 
 ; (defn zrank-cmd
 ;   "Determine the index of a member in a sorted set"
@@ -89,26 +61,10 @@
 
 (defn zrem-cmd
   "Remove one or more members from a sorted set"
-  [db k member]
-  (if (exists? db k) 
-    (let [zset (get-atom db k)
-          member (keyword member)]
-      (if (contains? @zset member)
-        (do 
-          (swap! zset #(dissoc % member))
-          [:cone])
-        [:czero]))
-    [:czero]))
+  [k member]
+  (dissoc k (keyword member)))
 
 (defn zscore-cmd
   "Get the score associated with the given member in a sorted set"
-  [db k member]
-  (if (exists? db k)
-    (let [zset (get-atom db k)]
-      (if (map? @zset) 
-        (let [score (get @zset (keyword member) nil)]
-          (if (nil? score)
-            [:nokeyerr]
-            [:ok score]))
-        [:wrongtypeerr]))
-    [:nokeyerr]))
+  [k member]
+  (get k (keyword member) nil))

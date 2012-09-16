@@ -53,16 +53,16 @@
    :srandmember    ['memobot.sets/srandmember-cmd #{:set} "r" :nokeyerr]
    :srem           ['memobot.sets/srem-cmd #{:set} "w!" #{} :czero :int] 
    :sunion         ['memobot.sets/sunion-cmd #{:set} "rs" :emptymultibulk :ok]
-   :zadd           ['memobot.sorted-sets/zadd-cmd "w" {}] 
-   :zcard          ['memobot.sorted-sets/zcard-cmd  "r" :czero]
-   :zcount         ['memobot.sorted-sets/zcount-cmd "r" :czero]
-   :zincrby        ['memobot.sorted-sets/zincrby-cmd "w" {}]
-   :zrange         ['memobot.sorted-sets/zrange-cmd "r" :emptymultibulk]
-   :zrangebyscore  ['memobot.sorted-sets/zrangebyscore-cmd "r" :emptymultibulk]
-   :zrank          ['memobot.sorted-sets/zrank-cmd "w" {}]
-   :zrem           ['memobot.sorted-sets/zrem-cmd "w" {}]
-   :zrevrange      ['memobot.sorted-sets/zrevrange-cmd "r" :emptymultibulk]
-   :zscore         ['memobot.sorted-sets/zscore-cmd "r" :nokeyerr]
+   :zadd           ['memobot.sorted-sets/zadd-cmd #{:hash} "w" {} :cone] 
+   :zcard          ['memobot.sorted-sets/zcard-cmd #{:hash}  "r" :czero :int]
+   :zcount         ['memobot.sorted-sets/zcount-cmd #{:hash} "r" :czero]
+   :zincrby        ['memobot.sorted-sets/zincrby-cmd #{:hash} "w" {} :just-ok] ; todo: should return :int
+   :zrange         ['memobot.sorted-sets/zrange-cmd #{:hash} "r" :emptymultibulk :ok]
+   :zrangebyscore  ['memobot.sorted-sets/zrangebyscore-cmd #{:hash} "r" :emptymultibulk]
+   :zrank          ['memobot.sorted-sets/zrank-cmd #{:hash} "w" {}]
+   :zrem           ['memobot.sorted-sets/zrem-cmd #{:hash} "w" {} :just-ok] ;todoL should return :int
+   :zrevrange      ['memobot.sorted-sets/zrevrange-cmd #{:hash} "r" :emptymultibulk :ok]
+   :zscore         ['memobot.sorted-sets/zscore-cmd #{:hash} "r" :nokeyerr :int]
   })
 
 (defn from-redis-proto
