@@ -2,122 +2,62 @@
   (:use [memobot types] 
         [clojure.data.finger-tree]))
 
-(defn counted-list?
-  [v]
-  (= (type v) clojure.data.finger_tree.CountedDoubleList))
-
 (defn lindex-cmd
   "Get an element from a list by its index"
-  [db k i]
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      [:ok (nth @ck (fix-type i) nil)])
-    [:nokeyerr]))
+  [k i]
+  (nth k i 0))
 
 (defn lpush-cmd
   "Prepend one or multiple values to a list"
-  [db k v]
-  (if (not (exists? db k))
-    (do
-      (intern db (symbol k) (atom (counted-double-list (fix-type v))))
-      [:cone])
-    (let [ck (get-atom db k)]
-      (if (counted-list? @ck) 
-        (do 
-          (swap! ck #(consl % (fix-type v)))
-          [:int (count @ck)])
-        [:wrongtypeerr]))))
+  [k v]
+  (consl k v))
 
 (defn lpushx-cmd
   "Prepend one or multiple values to a list"
-  [db k v]
-  (if (exists? db k)
-    (lpush-cmd db k v)
-    [:czero]))
+  [k v]
+  (if (= k :new) (counted-double-list v) k))
   
-
 (defn llen-cmd
   "Get the length of a list"
-  [db k]
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      [:int (count @ck)])
-    [:czero]))
+  [k]
+  (count k))
 
 (defn lpop-cmd
   "Remove and get the first element in a list"
-  [db k]
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      (if (counted-list? @ck) 
-        (let [e (first @ck)]
-          (if (nil? e)
-            [:nokeyerr]
-            (do 
-              (swap! ck #(next %))
-              [:ok e])))
-        [:wrongtypeerr]))
-    [:nokeyerr]))
+  [k]
+  (let [l (eval k)
+        e (first @l)]
+    (if (> (count @l) 1)
+      (swap! l #(next %))
+      (del-cmd k))
+    e))
 
 (defn lrange-cmd
   "Get a range of elements from a list"
-  [db k start end]
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      (if (counted-list? @ck)
-        [:ok (drop (fix-type start) (take (fix-type end) @ck))]
-        [:wrongtypeerr]))
-    [:emptymultibulk]))    
+  [k start end]
+  (drop start (take end k)))
 
 (defn rpush-cmd
   "Append one or multiple values to a list"
-  [db k v]
-  (if (not (exists? db k))
-    (do
-      (intern db (symbol k) (atom (counted-double-list (fix-type v))))
-      [:cone])
-    (let [ck (get-atom db k)]
-      (if (counted-list? @ck) 
-        (do 
-          (swap! ck #(conj % (fix-type v)))
-          [:int (count @ck)])
-        [:wrongtypeerr]))))
+  [k v]
+  (conj k v))
 
 (defn rpushx-cmd
   "Append one value to a list"
-  [db k v]
-  (if (exists? db k)
-    (rpush-cmd db k v)
-    [:czero]))
+  [k v]
+  (lpushx-cmd k v))
 
 (defn rpop-cmd
   "Remove and get the first element in a list"
-  [db k]
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      (if (counted-list? @ck) 
-        (let [e (peek @ck)]
-          (if (nil? e)
-            [:nokeyerr]
-            (do 
-              (swap! ck #(pop %))
-              [:ok e])))
-        [:wrongtypeerr]))
-    [:nokeyerr]))
+  [k]
+  (let [l (eval k)
+        e (peek @l)]
+    (if (> (count @l) 1)
+      (swap! l #(pop %))
+      (del-cmd k))
+    e))
 
 (defn lset-cmd
   "Set the value of an element in a list by its index"
-  [db k i v]
-  (if (exists? db k)
-    (let [ck (get-atom db k)]
-      (if (counted-list? @ck)
-        (do 
-          (try
-            (swap! ck #(assoc % (fix-type i) v))
-            [:just-ok]
-          (catch IndexOutOfBoundsException e [:outofrangeerr])))
-        [:wrongtypeerr]))
-    [:nosuchkey]))
-
-  
-
+  [k i v]
+  (assoc k i v))

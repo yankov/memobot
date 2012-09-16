@@ -1,5 +1,10 @@
 (ns memobot.types)
 
+(defn del-cmd
+  "Delete a key"
+  [k]
+  (ns-unmap (symbol (namespace k)) (symbol (name k))))
+
 (defn fix-type [v]
   (try 
     (Integer/parseInt v)

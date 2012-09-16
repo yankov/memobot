@@ -13,11 +13,6 @@
   [k]
   (get all-types (symbol (.replace (str (type k)) "class " "")) "none"))
 
-(defn del-cmd
-  "Delete a key"
-  [k]
-  (ns-unmap (symbol (namespace k)) (symbol (name k))))
-
 (defn ping-cmd
   []
   true)
@@ -58,7 +53,7 @@
          key-exists? (not (nil? (exists? k)))]
      (try
         (cond 
-          
+
           ;writing for non-existing key
           (and (not key-exists?) (or (= mode "w") (= mode "w!")))
             (if (contains? #{:nokeyerr :czero} empty-val)
@@ -81,6 +76,6 @@
             (run-func command-table k args))
 
      (catch clojure.lang.ArityException e [:just-err, (str " wrong number of arguments for '" command "' command")])
+     (catch IndexOutOfBoundsException e [:outofrangeerr])
      (catch NullPointerException e [:just-err, (str " unknown command '" (first redis-command) "'")]))))
-
-
+    
