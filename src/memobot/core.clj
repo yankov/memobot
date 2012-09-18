@@ -45,9 +45,9 @@
    (let [redis-command (list* (from-redis-proto protocol-str))
          k (get-key db (nth redis-command 1 nil))
          args (fix-types (drop 2 redis-command))
-         command-table ((keyword (symbol (first redis-command))) commands)
+         command-table ((keyword (symbol (.toLowerCase (first redis-command)))) commands)
          mode (command-table 2)
-         command (command-table 0)
+         command (-> (command-table 0) str .toLowerCase symbol)
          empty-val (command-table 3)
          response-type (command-table 4)
          key-exists? (not (nil? (exists? k)))]
