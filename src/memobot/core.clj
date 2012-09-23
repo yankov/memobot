@@ -54,7 +54,7 @@
      (try
         (cond 
 
-          ;writing for non-existing key
+          ;write for non-existing key
           (and (not key-exists?) (or (= mode "w") (= mode "w!")))
             (if (contains? #{:nokeyerr :czero} empty-val)
               [empty-val]
@@ -67,7 +67,7 @@
           (and (not key-exists?) (= mode "r"))
             [empty-val]
           
-          ;reading state (no key provided) 
+          ;read state (no key provided) 
           (= mode "rs")
             [response-type (apply (resolve command) k args)]
 

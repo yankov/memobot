@@ -22,13 +22,18 @@
   [k]
   (count k))
 
+(defn del-first!
+  "Removes first element in the list"
+  [l]
+  (swap! l #(next %)))
+
 (defn lpop-cmd
   "Remove and get the first element in a list"
   [k]
   (let [l (eval k)
         e (first @l)]
     (if (> (count @l) 1)
-      (swap! l #(next %))
+      (del-first! l)
       (del-cmd k))
     e))
 
@@ -47,13 +52,18 @@
   [k v]
   (lpushx-cmd k v))
 
+(defn del-last!
+  "Removes last element in the list"
+  [l]
+  (swap! l #(pop %)))
+
 (defn rpop-cmd
   "Remove and get the first element in a list"
   [k]
   (let [l (eval k)
         e (peek @l)]
     (if (> (count @l) 1)
-      (swap! l #(pop %))
+      (del-last! l)
       (del-cmd k))
     e))
 
