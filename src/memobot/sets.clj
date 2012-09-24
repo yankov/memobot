@@ -2,13 +2,18 @@
   (:use [memobot types]
         [clojure.set]))
 
+(defn sadd!
+  "Add member to a set"
+  [s v]
+  (swap! s #(conj % v)))
+
 (defn sadd-cmd
   "Add one or more members to a set"
   [k v]
   (let [s (eval k)]
     (if (not (contains? @s v))
       (do
-        (swap! s #(conj % v))
+        (sadd! s v)
         1)
       0)))
 
@@ -41,13 +46,18 @@
   [k]
   k)
 
+(defn srem!
+  "Remove member from a set"
+  [s m]
+    (swap! s #(disj % m)))
+
 (defn srem-cmd
   "Remove one or more members from a set"
   [k v]
   (let [s (eval k)]
     (if (contains? @s v)
       (do
-        (swap! s #(disj % v))
+        (srem! s v)
         1)
       0)))
 
