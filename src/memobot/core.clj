@@ -41,9 +41,8 @@
 
 (defn exec
   "Executes a command"
-  [db protocol-str]
-   (let [redis-command (list* (from-redis-proto protocol-str))
-         k (get-key db (nth redis-command 1 nil))
+  [db redis-command]
+   (let [k (get-key db (nth redis-command 1 nil))
          args (fix-types (drop 2 redis-command))
          command-table ((keyword (symbol (.toLowerCase (first redis-command)))) commands)
          mode (command-table 2)
@@ -79,3 +78,8 @@
      (catch IndexOutOfBoundsException e [:outofrangeerr])
      (catch NullPointerException e [:just-err, (str " unknown command '" (first redis-command) "'")]))))
     
+(defn process
+  [db protocol-str]
+  (prn (list* (from-redis-proto protocol-str)))
+  (format-reply 
+    (exec db (list* (from-redis-proto protocol-str)))))

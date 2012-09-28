@@ -44,7 +44,7 @@
             cb (.getMessage e)
             msg (.toString cb "UTF-8")]
         (use-db "db1")
-        (.write c (ChannelBuffers/copiedBuffer (.getBytes (format-reply (exec 'db1 msg)))))
+        (.write c (ChannelBuffers/copiedBuffer (.getBytes (process 'db1 msg))))
         ))
 
     (exceptionCaught
