@@ -9,9 +9,6 @@
      [org.jboss.netty.buffer ChannelBuffers])
   (:use [memobot core redis db]))
 
-;TODO: 
-; * replace this with 0mq ...
-
 (declare make-handler)
 
 (defn start

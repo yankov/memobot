@@ -80,6 +80,5 @@
     
 (defn process
   [db protocol-str]
-  (prn (list* (from-redis-proto protocol-str)))
   (format-reply 
     (exec db (list* (from-redis-proto protocol-str)))))
