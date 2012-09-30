@@ -1,5 +1,5 @@
 (ns memobot.test.strings
-  (:use [memobot core strings redis db])
+  (:use [memobot strings])
   (:use [clojure.test]))
 
 (deftest strings-test
