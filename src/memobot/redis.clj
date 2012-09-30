@@ -76,7 +76,7 @@
   [s]
   (apply str (str
     "*" (count s) "\r\n") 
-    (map #( str "$" (count (.toString %)) "\r\n" % "\r\n" ) s)))
+    (map #( str "$" (count (str %)) "\r\n" % "\r\n" ) s)))
 
 (def reply-msg {
   :just-ok "+OK"
