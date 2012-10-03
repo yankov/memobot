@@ -74,8 +74,7 @@
 (defn to-redis-proto
   "Converts a collection to redis protocol"
   [s]
-  (apply str (str
-    "*" (count s) "\r\n") 
+  (apply str "*" (count s) "\r\n"
     (map #( str "$" (count (str %)) "\r\n" % "\r\n" ) s)))
 
 (def reply-msg {
